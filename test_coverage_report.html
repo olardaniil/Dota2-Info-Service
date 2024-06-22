@@ -1,0 +1,886 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>app: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">dota2_info_service/cmd/app/main.go (0.0%)</option>
+				
+				<option value="file1">dota2_info_service/confing/config.go (0.0%)</option>
+				
+				<option value="file2">dota2_info_service/docs/docs.go (100.0%)</option>
+				
+				<option value="file3">dota2_info_service/internal/entity/hero.go (66.7%)</option>
+				
+				<option value="file4">dota2_info_service/internal/handler/h_hero_counter.go (64.7%)</option>
+				
+				<option value="file5">dota2_info_service/internal/handler/h_hero_info.go (64.7%)</option>
+				
+				<option value="file6">dota2_info_service/internal/handler/response_factory.go (83.3%)</option>
+				
+				<option value="file7">dota2_info_service/internal/handler/router.go (0.0%)</option>
+				
+				<option value="file8">dota2_info_service/internal/repository/redis/r_cache_hero.go (73.3%)</option>
+				
+				<option value="file9">dota2_info_service/internal/repository/repository.go (100.0%)</option>
+				
+				<option value="file10">dota2_info_service/internal/service/s_dotabuff.go (100.0%)</option>
+				
+				<option value="file11">dota2_info_service/internal/service/s_hero.go (71.4%)</option>
+				
+				<option value="file12">dota2_info_service/internal/service/service.go (0.0%)</option>
+				
+				<option value="file13">dota2_info_service/pkg/database/redis.go (75.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "dota2_info_service/confing"
+        "dota2_info_service/internal/handler"
+        "dota2_info_service/internal/repository"
+        "dota2_info_service/internal/service"
+        "dota2_info_service/pkg/database"
+        "github.com/joho/godotenv"
+        "log"
+)
+
+// @title Dota2-Info-Service
+// @version 1.0
+// @description API Server for Dota2-Info-Service
+
+func main() <span class="cov0" title="0">{
+        cfg := confing.GetConfig()
+
+        redis, err := database.NewRedis(cfg.RedisHost+":"+cfg.RedisPort, cfg.RedisPass, cfg.RedisDB)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+        }</span>
+
+        <span class="cov0" title="0">repo := repository.NewRepository(redis)
+
+        serv := service.NewService(repo)
+
+        handlers := handler.NewHandler(serv)
+
+        err = handlers.Run(cfg.AppPort)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalln(err)
+        }</span>
+}
+
+func init() <span class="cov0" title="0">{
+        log.SetFlags(log.Ldate | log.Ltime | log.LUTC | log.Lshortfile)
+
+        err := godotenv.Load()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Println(err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package confing
+
+import (
+        "fmt"
+        "os"
+        "strconv"
+)
+
+type Config struct {
+        AppPort   string
+        RedisHost string
+        RedisPort string
+        RedisPass string
+        RedisDB   int
+}
+
+func GetConfig() Config <span class="cov0" title="0">{
+        appPort := os.Getenv("APP_PORT")
+        if appPort == "" </span><span class="cov0" title="0">{
+                appPort = "8080"
+                fmt.Println("APP_PORT is not set in environment variables. \nUsing default value: 8080")
+        }</span>
+
+        <span class="cov0" title="0">redisHost := os.Getenv("REDIS_HOST")
+        if redisHost == "" </span><span class="cov0" title="0">{
+                redisHost = "127.0.0.1"
+                fmt.Println("REDIS_HOST is not set in environment variables. \nUsing default value: 127.0.0.1")
+        }</span>
+
+        <span class="cov0" title="0">redisPort := os.Getenv("REDIS_PORT")
+        if redisPort == "" </span><span class="cov0" title="0">{
+                redisPort = "6379"
+                fmt.Println("REDIS_PORT is not set in environment variables. \nUsing default value: 6379")
+        }</span>
+
+        <span class="cov0" title="0">redisPass := os.Getenv("REDIS_PASSWORD")
+        if redisPass == "" </span><span class="cov0" title="0">{
+                redisPass = "password"
+                fmt.Println("REDIS_PASSWORD is not set in environment variables. \nUsing default value: password")
+        }</span>
+
+        <span class="cov0" title="0">redisDB := os.Getenv("REDIS_DB")
+        if redisDB == "" </span><span class="cov0" title="0">{
+                redisDB = "0"
+                fmt.Println("REDIS_DB is not set in environment variables. \nUsing default value: 0")
+        }</span>
+
+        <span class="cov0" title="0">redisDBInt, err := strconv.Atoi(redisDB)
+        if err != nil </span><span class="cov0" title="0">{
+                redisDBInt = 0
+        }</span>
+
+        <span class="cov0" title="0">return Config{
+                AppPort:   appPort,
+                RedisHost: redisHost,
+                RedisPort: redisPort,
+                RedisPass: redisPass,
+                RedisDB:   redisDBInt,
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">// Package docs Code generated by swaggo/swag. DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = `{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {},
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {
+        "/counter/{hero}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heroes"
+                ],
+                "summary": "Получить информацию о персонажах, против которых заданные герой играет плохо",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя героя",
+                        "name": "hero",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.HeroInfoCounterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/info/{hero}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heroes"
+                ],
+                "summary": "Получить информацию по заданному герою",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя героя",
+                        "name": "hero",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.HeroInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.HeroInfoCounterResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "strong_opponents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StrongOpponent"
+                    }
+                }
+            }
+        },
+        "entity.HeroInfoResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "popular_lines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Line"
+                    }
+                }
+            }
+        },
+        "entity.Line": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "presence": {
+                    "type": "string"
+                },
+                "win_rate": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.StrongOpponent": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "win_rate_original_hero": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &amp;swag.Spec{
+        Version:          "1.0",
+        Host:             "",
+        BasePath:         "",
+        Schemes:          []string{},
+        Title:            "Dota2-Info-Service",
+        Description:      "API Server for Dota2-Info-Service",
+        InfoInstanceName: "swagger",
+        SwaggerTemplate:  docTemplate,
+        LeftDelim:        "{{",
+        RightDelim:       "}}",
+}
+
+func init() <span class="cov8" title="1">{
+        swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package entity
+
+import (
+        "encoding/json"
+        "fmt"
+        "strings"
+)
+
+type Hero struct {
+        Name            string           `json:"name,omitempty"`
+        PopularLines    []Line           `json:"popular_lines,omitempty"`
+        StrongOpponents []StrongOpponent `json:"strong_opponents,omitempty"`
+}
+
+func (h *Hero) Validate() error <span class="cov8" title="1">{
+        // Проверка имени
+        if h.Name == "" </span><span class="cov0" title="0">{
+                return fmt.Errorf("имя героя не может быть пустым")
+        }</span>
+        // Берём только первую часть до "/"
+        <span class="cov8" title="1">h.Name = strings.Split(h.Name, "/")[0]
+
+        return nil</span>
+}
+
+func (h *Hero) MarshalBinary() ([]byte, error) <span class="cov8" title="1">{
+        return json.Marshal(h)
+}</span>
+
+func (h *Hero) UnmarshalBinary(data []byte) error <span class="cov0" title="0">{
+        return json.Unmarshal(data, &amp;h)
+}</span>
+
+type HeroInfoResponse struct {
+        Name         string `json:"name,omitempty"`
+        PopularLines []Line `json:"popular_lines,omitempty"`
+}
+
+type HeroInfoCounterResponse struct {
+        Name            string           `json:"name,omitempty"`
+        StrongOpponents []StrongOpponent `json:"strong_opponents,omitempty"`
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handler
+
+import (
+        "dota2_info_service/internal/entity"
+        "net/http"
+)
+
+func (h *Handler) HeroCounterHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case "GET":<span class="cov0" title="0">
+                h.GetHeroInfoCounter(w, r)</span>
+        }
+}
+
+// GetHeroInfoCounter
+// @Summary Получить информацию о персонажах, против которых заданные герой играет плохо
+// @Tags heroes
+// @Accept json
+// @Produce json
+// @Param hero path string true "Имя героя"
+// @Success 200 {object} entity.HeroInfoCounterResponse
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /counter/{hero} [get]
+func (h *Handler) GetHeroInfoCounter(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        // Получаем имя героя
+        var hero = new(entity.Hero)
+        hero.Name = r.URL.Path[len("/counter/"):]
+        // Валидация
+        err := hero.Validate()
+        if err != nil </span><span class="cov0" title="0">{
+                h.response.SendError(w, 400, err.Error())
+                return
+        }</span>
+        // Получаем информацию о герое
+        <span class="cov8" title="1">heroInfo, err := h.service.Hero.GetHeroByName(hero.Name)
+        if err != nil </span><span class="cov8" title="1">{
+                if err.Error() == "Not Found" </span><span class="cov8" title="1">{
+                        h.response.SendError(w, 404, "Герой не найден")
+                        return
+                }</span>
+                <span class="cov0" title="0">h.response.SendError(w, 400, err.Error())
+                return</span>
+        }
+        <span class="cov8" title="1">hero.StrongOpponents = heroInfo.StrongOpponents
+        // Отправляем ответ
+        h.response.SendJSON(w, 200, hero)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package handler
+
+import (
+        "dota2_info_service/internal/entity"
+        "net/http"
+)
+
+func (h *Handler) HeroInfoHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case "GET":<span class="cov0" title="0">
+                h.GetHeroInfo(w, r)</span>
+        }
+}
+
+// GetHeroInfo
+// @Summary Получить информацию по заданному герою
+// @Tags heroes
+// @Accept json
+// @Produce json
+// @Param hero path string true "Имя героя"
+// @Success 200 {object} entity.HeroInfoResponse
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /info/{hero} [get]
+func (h *Handler) GetHeroInfo(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        // Получаем имя героя
+        var hero = new(entity.Hero)
+        hero.Name = r.URL.Path[len("/info/"):]
+        // Валидация
+        err := hero.Validate()
+        if err != nil </span><span class="cov0" title="0">{
+                h.response.SendError(w, 400, err.Error())
+                return
+        }</span>
+        // Получаем информацию о герое
+        <span class="cov8" title="1">heroInfo, err := h.service.Hero.GetHeroByName(hero.Name)
+        if err != nil </span><span class="cov8" title="1">{
+                if err.Error() == "Not Found" </span><span class="cov8" title="1">{
+                        h.response.SendError(w, 404, "Герой не найден")
+                        return
+                }</span>
+                <span class="cov0" title="0">h.response.SendError(w, 400, err.Error())
+                return</span>
+        }
+        <span class="cov8" title="1">hero.PopularLines = heroInfo.PopularLines
+        // Отправляем ответ
+        h.response.SendJSON(w, 200, hero)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package handler
+
+import (
+        "encoding/json"
+        "net/http"
+)
+
+// ResponseFactory - фабрика для создания ответов
+type ResponseFactory struct{}
+
+// NewResponseFactory - создает новый экземпляр ResponseFactory
+func NewResponseFactory() *ResponseFactory <span class="cov8" title="1">{
+        return &amp;ResponseFactory{}
+}</span>
+
+// SendJSON - отправляет JSON-ответ
+func (rf *ResponseFactory) SendJSON(w http.ResponseWriter, statusCode int, data interface{}) <span class="cov8" title="1">{
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(statusCode)
+        _ = json.NewEncoder(w).Encode(data)
+}</span>
+
+type Error struct {
+        Error string `json:"error"`
+}
+
+// SendError - отправляет JSON-ответ с ошибкой
+func (rf *ResponseFactory) SendError(w http.ResponseWriter, statusCode int, message string) <span class="cov8" title="1">{
+        rf.SendJSON(w, statusCode, Error{Error: message})
+}</span>
+
+// SendSuccess - отправляет успешный JSON-ответ
+func (rf *ResponseFactory) SendSuccess(w http.ResponseWriter, statusCode int, message string) <span class="cov0" title="0">{
+        rf.SendJSON(w, statusCode, map[string]string{"message": message})
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package handler
+
+import (
+        _ "dota2_info_service/docs"
+        "dota2_info_service/internal/service"
+        "fmt"
+        httpSwagger "github.com/swaggo/http-swagger"
+        "net/http"
+)
+
+type Handler struct {
+        service  *service.Service
+        response *ResponseFactory
+}
+
+func NewHandler(service *service.Service) *Handler <span class="cov0" title="0">{
+        return &amp;Handler{
+                service:  service,
+                response: NewResponseFactory(),
+        }
+}</span>
+
+func (h *Handler) Run(port string) error <span class="cov0" title="0">{
+        // api
+        http.HandleFunc("/info/", h.HeroInfoHandler)
+        http.HandleFunc("/counter/", h.HeroCounterHandler)
+        // swagger
+        http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
+        //
+        fmt.Println("Сервис запущен")
+        fmt.Println("http://localhost:" + port + "/swagger/")
+        err := http.ListenAndServe(":"+port, nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package redis
+
+import (
+        "dota2_info_service/internal/entity"
+        "dota2_info_service/pkg/database"
+        "fmt"
+        "time"
+)
+
+type CacheHeroRepo struct {
+        redis *database.Redis
+}
+
+func NewCacheHeroRepo(redis *database.Redis) *CacheHeroRepo <span class="cov0" title="0">{
+        return &amp;CacheHeroRepo{
+                redis: redis,
+        }
+}</span>
+
+func (c *CacheHeroRepo) GetHeroByName(heroName string) (entity.Hero, error) <span class="cov8" title="1">{
+        key := fmt.Sprintf("hero:%s", heroName)
+        hero := entity.Hero{}
+        err := c.redis.Client.Get(key).Scan(&amp;hero)
+        if err != nil </span><span class="cov8" title="1">{
+                return entity.Hero{}, err
+        }</span>
+
+        <span class="cov0" title="0">return hero, nil</span>
+}
+
+func (c *CacheHeroRepo) SetHero(hero entity.Hero) error <span class="cov8" title="1">{
+        key := fmt.Sprintf("hero:%s", hero.Name)
+        heroByte, err := hero.MarshalBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = c.redis.Client.Set(key, heroByte, time.Hour*24).Err()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package repository
+
+import (
+        "dota2_info_service/internal/entity"
+        "dota2_info_service/internal/repository/redis"
+        "dota2_info_service/pkg/database"
+)
+
+type CacheHero interface {
+        GetHeroByName(heroName string) (entity.Hero, error)
+        SetHero(hero entity.Hero) error
+}
+
+type Repository struct {
+        CacheHero
+}
+
+func NewRepository(dbRedis *database.Redis) *Repository <span class="cov8" title="1">{
+        return &amp;Repository{
+                CacheHero: redis.NewCacheHeroRepo(dbRedis),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package service
+
+import (
+        "dota2_info_service/internal/entity"
+        "fmt"
+        "github.com/gocolly/colly"
+        "log"
+)
+
+type DotabuffService struct {
+}
+
+func NewDotabuffService() *DotabuffService <span class="cov8" title="1">{
+        return &amp;DotabuffService{}
+}</span>
+
+func (s *DotabuffService) GetHeroByName(heroName string) (entity.Hero, error) <span class="cov8" title="1">{
+        var hero entity.Hero
+        c := colly.NewCollector()
+        c.UserAgent = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36"
+
+        var lines []entity.Line
+        // Получаем информацию о популярных линиях
+        selector := "body &gt; div.container-outer.seemsgood &gt; div.skin-container &gt; div.container-inner.container-inner-content &gt; div.content-inner &gt; div.row-12.with-sidebar &gt; div.col-8 &gt; section:nth-child(2) &gt; article &gt; table &gt; tbody"
+        c.OnHTML(selector, func(e *colly.HTMLElement) </span><span class="cov8" title="1">{
+                e.ForEach("tr", func(_ int, el *colly.HTMLElement) </span><span class="cov8" title="1">{
+                        var line entity.Line
+                        line.Name = el.ChildText("td:nth-child(1)")
+                        line.Presence = el.ChildText("td:nth-child(2)")
+                        line.WinRate = el.ChildText("td:nth-child(3)")
+                        lines = append(lines, line)
+                }</span>)
+        })
+
+        <span class="cov8" title="1">var strongOpponents []entity.StrongOpponent
+        // Получаем информацию о 5 самых сильных противниках для героя
+        selector = "body &gt; div.container-outer.seemsgood &gt; div.skin-container &gt; div.container-inner.container-inner-content &gt; div.content-inner &gt; div.row-12.with-sidebar &gt; div.col-8 &gt; section:nth-child(11) &gt; article &gt; table &gt; tbody"
+        c.OnHTML(selector, func(e *colly.HTMLElement) </span><span class="cov8" title="1">{
+                e.ForEach("tr", func(_ int, el *colly.HTMLElement) </span><span class="cov8" title="1">{
+                        if len(strongOpponents) == 5 </span><span class="cov8" title="1">{
+                                return
+                        }</span>
+                        <span class="cov8" title="1">var strongOpponent entity.StrongOpponent
+                        strongOpponent.Name = el.ChildText("td:nth-child(2) &gt; a")
+                        strongOpponent.Url = fmt.Sprintf("https://ru.dotabuff.com%s", el.ChildAttr("td:nth-child(2) &gt; a", "href"))
+                        strongOpponent.WinRateOriginalHero = el.ChildText("td:nth-child(4)")
+                        strongOpponents = append(strongOpponents, strongOpponent)</span>
+                })
+        })
+
+        <span class="cov8" title="1">c.OnRequest(func(r *colly.Request) </span><span class="cov8" title="1">{
+                log.Println("Visiting", r.URL)
+        }</span>)
+
+        <span class="cov8" title="1">c.OnError(func(_ *colly.Response, err error) </span><span class="cov8" title="1">{
+                log.Println("Something went wrong:", err)
+        }</span>)
+
+        <span class="cov8" title="1">err := c.Visit("https://ru.dotabuff.com/heroes/" + heroName)
+        if err != nil </span><span class="cov8" title="1">{
+                return hero, err
+        }</span>
+
+        <span class="cov8" title="1">hero = entity.Hero{
+                Name:            heroName,
+                PopularLines:    lines,
+                StrongOpponents: strongOpponents,
+        }
+
+        return hero, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package service
+
+import (
+        "dota2_info_service/internal/entity"
+        "dota2_info_service/internal/repository"
+)
+
+type HeroService struct {
+        cacheHeroRepo repository.CacheHero
+        dotabuff      Dotabuff
+}
+
+func NewHeroService(cacheHeroRepo repository.CacheHero, dotabuff Dotabuff) *HeroService <span class="cov0" title="0">{
+        return &amp;HeroService{
+                cacheHeroRepo: cacheHeroRepo,
+                dotabuff:      dotabuff,
+        }
+}</span>
+
+func (s *HeroService) GetHeroByName(heroName string) (entity.Hero, error) <span class="cov8" title="1">{
+        // Смотрим в кэше
+        hero, err := s.cacheHeroRepo.GetHeroByName(heroName)
+        if err != nil </span><span class="cov8" title="1">{
+                if err.Error() != "redis: nil" </span><span class="cov0" title="0">{
+                        return hero, err
+                }</span>
+        }
+        // Если есть в кэше, то возвращаем
+        <span class="cov8" title="1">if hero.Name != "" </span><span class="cov0" title="0">{
+                return hero, nil
+        }</span>
+        // Если нет в кэше, то получаем из dotabuff service
+        <span class="cov8" title="1">hero, err = s.dotabuff.GetHeroByName(heroName)
+        if err != nil </span><span class="cov8" title="1">{
+                return hero, err
+        }</span>
+        // Записываем в кэш
+        <span class="cov8" title="1">err = s.cacheHeroRepo.SetHero(hero)
+        if err != nil </span><span class="cov0" title="0">{
+                return hero, err
+        }</span>
+
+        <span class="cov8" title="1">return hero, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package service
+
+import (
+        "dota2_info_service/internal/entity"
+        "dota2_info_service/internal/repository"
+)
+
+type Hero interface {
+        GetHeroByName(heroName string) (entity.Hero, error)
+}
+
+type Dotabuff interface {
+        GetHeroByName(heroName string) (entity.Hero, error)
+}
+
+type Service struct {
+        Hero
+        Dotabuff
+}
+
+func NewService(repo *repository.Repository) *Service <span class="cov0" title="0">{
+        return &amp;Service{
+                Hero:     NewHeroService(repo, NewDotabuffService()),
+                Dotabuff: NewDotabuffService(),
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package database
+
+import (
+        "github.com/go-redis/redis"
+)
+
+type Redis struct {
+        Client *redis.Client
+}
+
+func NewRedis(address, password string, db int) (*Redis, error) <span class="cov8" title="1">{
+        client := redis.NewClient(&amp;redis.Options{
+                Addr:     address,
+                Password: password,
+                DB:       db,
+        })
+        if err := client.Ping().Err(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;Redis{
+                Client: client,
+        }, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

@@ -17,7 +17,7 @@ import (
 func main() {
 	cfg := confing.GetConfig()
 
-	redis, err := database.NewRedis(cfg.RedisHost, cfg.RedisPort, cfg.RedisPass, cfg.RedisDB)
+	redis, err := database.NewRedis(cfg.RedisHost+":"+cfg.RedisPort, cfg.RedisPass, cfg.RedisDB)
 	if err != nil {
 		log.Fatalln(err)
 	}

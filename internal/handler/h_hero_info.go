@@ -2,7 +2,6 @@ package handler
 
 import (
 	"dota2_info_service/internal/entity"
-	"log"
 	"net/http"
 )
 
@@ -28,7 +27,6 @@ func (h *Handler) GetHeroInfo(w http.ResponseWriter, r *http.Request) {
 	var hero = new(entity.Hero)
 	hero.Name = r.URL.Path[len("/info/"):]
 	// Валидация
-	log.Println(hero.Name)
 	err := hero.Validate()
 	if err != nil {
 		h.response.SendError(w, 400, err.Error())
