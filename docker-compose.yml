@@ -17,8 +17,8 @@ services:
     env_file:
       - .env
     environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PASSWORD=redis
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_DB=${REDIS_DB}
     depends_on:
       - redis
