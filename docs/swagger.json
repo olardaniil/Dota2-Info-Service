@@ -1,0 +1,163 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API Server for Dota2-Info-Service",
+        "title": "Dota2-Info-Service",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/counter/{hero}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heroes"
+                ],
+                "summary": "Получить информацию о персонажах, против которых заданные герой играет плохо",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя героя",
+                        "name": "hero",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.HeroInfoCounterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/info/{hero}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "heroes"
+                ],
+                "summary": "Получить информацию по заданному герою",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Имя героя",
+                        "name": "hero",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.HeroInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.HeroInfoCounterResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "strong_opponents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StrongOpponent"
+                    }
+                }
+            }
+        },
+        "entity.HeroInfoResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "popular_lines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Line"
+                    }
+                }
+            }
+        },
+        "entity.Line": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "presence": {
+                    "type": "string"
+                },
+                "win_rate": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.StrongOpponent": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "win_rate_original_hero": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

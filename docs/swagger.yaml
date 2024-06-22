@@ -1,0 +1,106 @@
+definitions:
+  entity.HeroInfoCounterResponse:
+    properties:
+      name:
+        type: string
+      strong_opponents:
+        items:
+          $ref: '#/definitions/entity.StrongOpponent'
+        type: array
+    type: object
+  entity.HeroInfoResponse:
+    properties:
+      name:
+        type: string
+      popular_lines:
+        items:
+          $ref: '#/definitions/entity.Line'
+        type: array
+    type: object
+  entity.Line:
+    properties:
+      name:
+        type: string
+      presence:
+        type: string
+      win_rate:
+        type: string
+    type: object
+  entity.StrongOpponent:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
+      win_rate_original_hero:
+        type: string
+    type: object
+  handler.Error:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API Server for Dota2-Info-Service
+  title: Dota2-Info-Service
+  version: "1.0"
+paths:
+  /counter/{hero}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Имя героя
+        in: path
+        name: hero
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.HeroInfoCounterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Получить информацию о персонажах, против которых заданные герой играет
+        плохо
+      tags:
+      - heroes
+  /info/{hero}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Имя героя
+        in: path
+        name: hero
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.HeroInfoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Получить информацию по заданному герою
+      tags:
+      - heroes
+swagger: "2.0"
