@@ -20,3 +20,10 @@
 # Go workspace file
 go.work
 go.work.sum
+/.idea/.gitignore
+/.idea/dataSources.xml
+/.idea/Dota2-Info-Service-Go.iml
+/go.sum
+/.idea/modules.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
